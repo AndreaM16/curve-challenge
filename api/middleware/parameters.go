@@ -7,4 +7,7 @@ const (
 
 	// UserLocation is used to represent merchant's location
 	UserLocation = "User Location"
+
+	// UserID is used to represent user's ID
+	UserID = "User ID"
 )

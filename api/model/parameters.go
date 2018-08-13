@@ -13,4 +13,19 @@ const (
 
 	// UserType represents user's Type
 	UserType = "UserType"
+
+	// Receiver represents receiver parameter
+	Receiver = "Receiver"
+
+	// Sender represents sender parameter
+	Sender = "Sender"
+
+	// Amount represents amount parameter
+	Amount = "Amount"
+
+	// CapturedAmount represents Captured Amount parameter
+	CapturedAmount = "CapturedAmount"
+
+	// TransactionType represents transaction type parameter
+	TransactionType = "TransactionType"
 )

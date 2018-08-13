@@ -11,9 +11,9 @@ type PaymentAccount struct {
 	// ID is the unique identifier for a a payment account
 	ID string `json:"ID,omitempty"`
 	// MarkedBalance is the marked balance. It cannot be used.
-	MarkedBalance float64 `json:"marked_balance,omitempty"`
+	MarkedBalance float64 `json:"marked_balance"`
 	// AvailableBalance is the available balance
-	AvailableBalance float64 `json:"available_balance,omitempty"`
+	AvailableBalance float64 `json:"available_balance"`
 }
 
 // SetMarkedBalance sets a marked balance to the passed one

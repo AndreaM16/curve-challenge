@@ -58,3 +58,30 @@ func CreateUser(svc *psql.PSQL, user *model.User) error {
 	return nil
 
 }
+
+// GetUser retrieves a user from the database
+func GetUser(svc *psql.PSQL, userID string) (*model.User, error) {
+
+	if len(userID) == 0 {
+		return nil, internalError.Format(UserID, ErrMissingRequiredParameter)
+	}
+
+	var user model.User
+
+	query := `SELECT ID,payment_account,type,location FROM users WHERE ID = $1`
+
+	stmt, err := svc.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	selectErr := stmt.QueryRow(userID).Scan(&user.ID, &user.PaymentAccount, &user.Type, &user.Location)
+	if selectErr != nil {
+		return nil, selectErr
+	}
+
+	return &user, nil
+
+}

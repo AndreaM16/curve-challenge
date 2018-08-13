@@ -2,14 +2,15 @@ package handler
 
 import (
 	"net/http"
-	"encoding/json"
 
 	"github.com/andream16/curve-challenge/pkg/psql"
 	"github.com/andream16/curve-challenge/api/middleware"
+	"github.com/andream16/curve-challenge/api/model"
+	"encoding/json"
 )
 
-// GetPaymentAccount gets user available balance
-func GetPaymentAccount(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
+// TopUp adds an amount of money to an user's payment account
+func TopUp(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
@@ -30,12 +31,45 @@ func GetPaymentAccount(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Reque
 
 		}
 
+		var topUp model.TopUp
+
+		unmarshalErr := UnmarshalBody(r, &topUp)
+		if unmarshalErr != nil {
+
+			w.WriteHeader(http.StatusBadRequest)
+
+			resp := NewResponse(InvalidParameters)
+
+			b, _ := resp.JsonMarshal()
+
+			w.Write(b)
+
+			return
+		}
+
 		account, err := middleware.GetPaymentAccount(svc, userID)
 		if err != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)
 
 			resp := NewResponse(err.Error())
+
+			b, _ := resp.JsonMarshal()
+
+			w.Write(b)
+
+			return
+
+		}
+
+		account = account.SetAvailableBalance(account.AvailableBalance + topUp.Amount)
+
+		updateErr := middleware.UpdatePaymentAccount(svc, account)
+		if updateErr != nil {
+
+			w.WriteHeader(http.StatusInternalServerError)
+
+			resp := NewResponse(updateErr.Error())
 
 			b, _ := resp.JsonMarshal()
 
