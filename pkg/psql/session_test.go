@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/andream16/curve-challenge/testdata"
+	"github.com/andream16/curve-challenge/internal/configuration"
 )
 
 func TestPSQL_SetDB(t *testing.T) {
@@ -23,11 +24,20 @@ func TestPSQL_SetDB(t *testing.T) {
 
 func TestNew(t *testing.T) {
 
-	cfg := testdata.MockConfiguration(t)
+	cfg := testdata.MockConfiguration
+
+	mockNewSession(t, cfg)
+
+}
+
+func mockNewSession(t *testing.T, cfg *configuration.Configuration) *PSQL {
+
+	t.Helper()
 
 	svc, err := New(cfg)
 
 	assert.NoError(t, err)
-	assert.NotEmpty(t, svc)
+
+	return svc
 
 }

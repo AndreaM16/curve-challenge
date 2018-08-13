@@ -1,22 +1,21 @@
 package testdata
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-
 	"github.com/andream16/curve-challenge/internal/configuration"
 )
 
-func MockConfiguration(t *testing.T) *configuration.Configuration {
-
-	t.Helper()
-
-	cfg, err := configuration.Get()
-
-	assert.NoError(t, err)
-	assert.NotEmpty(t, cfg)
-
-	return cfg
-
+var MockConfiguration = &configuration.Configuration{
+	Environment: "development",
+	Server: configuration.Server{
+		Host: "localhost",
+		Port: "port",
+	},
+	PSQL: configuration.PSQL{
+		DriverName: "postgres",
+		DBName: "curve",
+		User: "postgres",
+		Host: "localhost",
+		SSLMode: "disable",
+	},
 }
+

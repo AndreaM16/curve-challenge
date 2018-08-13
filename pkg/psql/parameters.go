@@ -19,4 +19,10 @@ const (
 
 	// DriverName represents DriverName parameter
 	DriverName = "DriverName"
+
+	// Query represents Query parameter
+	Query = "query"
+
+	// TableContent represents TableContent parameter
+	TableContent = "tableContent"
 )
