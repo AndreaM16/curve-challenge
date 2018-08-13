@@ -15,7 +15,7 @@ var Tables = map[string]string{
 	`PaymentAccounts`: `CREATE TABLE IF NOT EXISTS payment_accounts (
 		ID UUID PRIMARY KEY, 
 		available_balance double precision NOT NULL,
-		blocked_balance double precision NOT NULL
+		marked_balance double precision NOT NULL
 	)`,
 	`Users`: `CREATE TABLE IF NOT EXISTS users (
 		ID UUID PRIMARY KEY, 
