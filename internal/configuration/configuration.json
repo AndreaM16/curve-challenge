@@ -1,0 +1,15 @@
+
+{
+  "ENVIRONMENT" : "development",
+  "SERVER" : {
+    "HOST" : "localhost",
+    "PORT" : "80"
+  },
+  "PSQL" : {
+    "DRIVERNAME" : "postgres",
+    "DBNAME"     : "curve",
+    "USER"       : "postgres",
+    "HOST"       : "localhost",
+    "SSLMODE"    : "disable"
+  }
+}
