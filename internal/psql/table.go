@@ -23,8 +23,8 @@ var Tables = []string{
 	)`,
 	`CREATE TABLE IF NOT EXISTS transactions (
 		ID UUID PRIMARY KEY, 
-		sender UUID REFERENCES users (ID),
-		receiver UUID REFERENCES users (ID),
+		sender UUID,
+		receiver UUID,
 		date text,
 		amount double precision,
 		type text
@@ -38,12 +38,25 @@ var Tables = []string{
 	)`,
 }
 
+var DefaultInserts = []string{
+	`INSERT INTO merchants(ID,name,location,balance) VALUES ('c9e35256-e831-49c8-8471-164e17a66e31', 'EXTERNAL', 'London', 10.0)`,
+}
+
 // CreateTables creates Tables mandatory for the program
 func CreateTables(svc *psql.PSQL) error {
 
 	for _, v := range Tables {
 
 		err := svc.CreateTable(v)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	for _, v := range DefaultInserts {
+
+		err := svc.InsertInto(v)
 		if err != nil {
 			return err
 		}

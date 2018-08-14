@@ -20,3 +20,17 @@ func (svc *PSQL) CreateTable(query string) error {
 	return nil
 
 }
+
+// InsertInto inserts a row into a table
+func (svc *PSQL) InsertInto(query string) error {
+
+	stmt, err := svc.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	stmt.Exec()
+
+	return nil
+
+}

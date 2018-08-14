@@ -13,7 +13,6 @@ import (
 func TestCreateCard(t *testing.T) {
 
 	name := "someMerchant"
-	owner := "c9e35256-e831-49c8-8471-164e17a66e29"
 
 	cfg := testdata.MockConfiguration
 
@@ -21,21 +20,24 @@ func TestCreateCard(t *testing.T) {
 
 	assert.NoError(t, svcErr)
 
+	usr, usrErr := CreateUser(svc)
+
+	assert.NoError(t, usrErr)
+
 	c := new(model.Card)
-	c.SetName(name).SetOwner(owner)
+	c.SetName(name).SetOwner(usr.ID)
 
 	out, err := CreateCard(svc, c)
 
 	assert.NoError(t, err)
 	assert.Equal(t, name, out.Name)
-	assert.Equal(t, owner, out.Owner)
+	assert.Equal(t, usr.ID, out.Owner)
 
 }
 
 func TestGetCard(t *testing.T) {
 
 	name := "someMerchant"
-	owner := "c9e35256-e831-49c8-8471-164e17a66e29"
 
 	cfg := testdata.MockConfiguration
 
@@ -43,8 +45,12 @@ func TestGetCard(t *testing.T) {
 
 	assert.NoError(t, svcErr)
 
+	usr, usrErr := CreateUser(svc)
+
+	assert.NoError(t, usrErr)
+
 	c := new(model.Card)
-	c.SetName(name).SetOwner(owner)
+	c.SetName(name).SetOwner(usr.ID)
 
 	createdCard, createdCardErr := CreateCard(svc, c)
 
@@ -61,7 +67,6 @@ func TestUpdateCard(t *testing.T) {
 
 	amount := 10.0
 	name := "someMerchant"
-	owner := "c9e35256-e831-49c8-8471-164e17a66e29"
 
 	cfg := testdata.MockConfiguration
 
@@ -69,8 +74,12 @@ func TestUpdateCard(t *testing.T) {
 
 	assert.NoError(t, svcErr)
 
+	usr, usrErr := CreateUser(svc)
+
+	assert.NoError(t, usrErr)
+
 	c := new(model.Card)
-	c.SetName(name).SetOwner(owner)
+	c.SetName(name).SetOwner(usr.ID)
 
 	createdCard, createdCardErr := CreateCard(svc, c)
 

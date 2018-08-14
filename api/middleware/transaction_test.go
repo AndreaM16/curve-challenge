@@ -7,6 +7,7 @@ import (
 
 	"github.com/andream16/curve-challenge/api/model"
 	"github.com/andream16/curve-challenge/pkg/psql"
+	"github.com/andream16/curve-challenge/pkg/uuid"
 	"github.com/andream16/curve-challenge/testdata"
 )
 
@@ -14,7 +15,6 @@ func TestTopUp(t *testing.T) {
 
 	amount := 10.0
 	name := "someMerchant"
-	owner := "c9e35256-e831-49c8-8471-164e17a66e29"
 
 	cfg := testdata.MockConfiguration
 
@@ -22,8 +22,12 @@ func TestTopUp(t *testing.T) {
 
 	assert.NoError(t, svcErr)
 
+	usr, usrErr := CreateUser(svc)
+
+	assert.NoError(t, usrErr)
+
 	c := new(model.Card)
-	c.SetName(name).SetOwner(owner)
+	c.SetName(name).SetOwner(usr.ID)
 
 	createdCard, createdCardErr := CreateCard(svc, c)
 
@@ -38,5 +42,19 @@ func TestTopUp(t *testing.T) {
 
 	assert.NoError(t, updatedCardErr)
 	assert.Equal(t, amount, updatedCard.AvailableBalance)
+
+}
+
+func TestNewTransaction(t *testing.T) {
+
+	cfg := testdata.MockConfiguration
+
+	svc, svcErr := psql.New(cfg)
+
+	assert.NoError(t, svcErr)
+
+	txErr := newTransaction(svc, 10, uuid.New(), uuid.New(), TOPUP)
+
+	assert.NoError(t, txErr)
 
 }
