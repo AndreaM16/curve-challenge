@@ -65,6 +65,21 @@ Through such transaction system is possible for the user to know their available
  - postgresql (create a table called `curve`)
  - docker & docker-compose (optional)
  
+## Work in local:
+ - Install [dep](https://github.com/golang/dep)
+ - run `dep ensure`
+ - Edit `internal/configuration/configuration.json` by changing `"ENVIRONMENT" : "production"` to `"ENVIRONMENT" : "development"`
+ - run tests with `go test ./...`
+
+N.B. Make sure to start `postgresql` and create a table called `curve` with default settings.
+
+## Deploy with docker
+ - Install Docker and Docker-Compose
+ - Make sure that you have `"ENVIRONMENT" : "production"` in `internal/configuration/configuration.json`
+ - run `docker-compose` up
+ 
+N.B. make sure you have port `8000` and `5432` available.
+
 ## Endpoints
 
 ### Create User:
