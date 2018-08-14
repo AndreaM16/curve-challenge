@@ -31,3 +31,56 @@ func TestCreateCard(t *testing.T) {
 	assert.Equal(t, owner, out.Owner)
 
 }
+
+func TestGetCard(t *testing.T) {
+
+	name := "someMerchant"
+	owner := "c9e35256-e831-49c8-8471-164e17a66e29"
+
+	cfg := testdata.MockConfiguration
+
+	svc, svcErr := psql.New(cfg)
+
+	assert.NoError(t, svcErr)
+
+	c := new(model.Card)
+	c.SetName(name).SetOwner(owner)
+
+	createdCard, createdCardErr := CreateCard(svc, c)
+
+	assert.NoError(t, createdCardErr)
+
+	card, cardErr := GetCard(svc, createdCard.ID)
+
+	assert.NoError(t, cardErr)
+	assert.NotEmpty(t, card)
+
+}
+
+func TestUpdateCard(t *testing.T) {
+
+	amount := 10.0
+	name := "someMerchant"
+	owner := "c9e35256-e831-49c8-8471-164e17a66e29"
+
+	cfg := testdata.MockConfiguration
+
+	svc, svcErr := psql.New(cfg)
+
+	assert.NoError(t, svcErr)
+
+	c := new(model.Card)
+	c.SetName(name).SetOwner(owner)
+
+	createdCard, createdCardErr := CreateCard(svc, c)
+
+	assert.NoError(t, createdCardErr)
+
+	createdCard.IncrementAvailableBalance(amount)
+
+	updatedCard, updatedCardErr := UpdateCard(svc, createdCard)
+
+	assert.NoError(t, updatedCardErr)
+	assert.Equal(t, amount, updatedCard.AvailableBalance)
+
+}

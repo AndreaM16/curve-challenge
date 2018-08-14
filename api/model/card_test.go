@@ -67,3 +67,56 @@ func TestCard_SetID(t *testing.T) {
 	assert.NotEmpty(t, out.ID)
 
 }
+
+func TestCard_CanDecrement(t *testing.T) {
+
+	out := new(Card)
+	out.SetAvailableBalance().IncrementAvailableBalance(10.0)
+
+	assert.True(t, out.CanDecrement(9.0))
+
+}
+
+func TestCard_IncrementAvailableBalance(t *testing.T) {
+
+	amount := 10.0
+
+	out := new(Card)
+	out.SetAvailableBalance().IncrementAvailableBalance(amount)
+
+	assert.Equal(t, amount, out.AvailableBalance)
+
+}
+
+func TestCard_IncrementMarkedBalance(t *testing.T) {
+
+	amount := 10.0
+
+	out := new(Card)
+	out.SetMarkedBalance().IncrementMarkedBalance(amount)
+
+	assert.Equal(t, amount, out.MarkedBalance)
+
+}
+
+func TestCard_DecrementAvailableBalance(t *testing.T) {
+
+	amount := 10.0
+
+	out := new(Card)
+	out.SetAvailableBalance().IncrementAvailableBalance(amount).DecrementAvailableBalance(9.0)
+
+	assert.Equal(t, 1.0, out.AvailableBalance)
+
+}
+
+func TestCard_DecrementMarkedBalance(t *testing.T) {
+
+	amount := 10.0
+
+	out := new(Card)
+	out.SetMarkedBalance().IncrementMarkedBalance(amount).DecrementMarkedBalance(9.0)
+
+	assert.Equal(t, 1.0, out.MarkedBalance)
+
+}
