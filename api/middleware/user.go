@@ -26,7 +26,7 @@ func CreateUser(svc *psql.PSQL, user *model.User) error {
 		return internalError.Format(UserLocation, ErrMissingRequiredParameter)
 	}
 
-	account, accountErr := CreatePaymentAccount(svc)
+	account, accountErr := CreateCard(svc)
 	if accountErr != nil {
 		return accountErr
 	}
@@ -48,7 +48,7 @@ func CreateUser(svc *psql.PSQL, user *model.User) error {
 	_, insertError := stmt.Exec(
 		userEntry.ID,
 		userEntry.Type,
-		userEntry.PaymentAccount,
+		userEntry.Card,
 		userEntry.Location,
 	)
 	if insertError != nil {
@@ -77,7 +77,7 @@ func GetUser(svc *psql.PSQL, userID string) (*model.User, error) {
 
 	defer stmt.Close()
 
-	selectErr := stmt.QueryRow(userID).Scan(&user.ID, &user.PaymentAccount, &user.Type, &user.Location)
+	selectErr := stmt.QueryRow(userID).Scan(&user.ID, &user.Card, &user.Type, &user.Location)
 	if selectErr != nil {
 		return nil, selectErr
 	}

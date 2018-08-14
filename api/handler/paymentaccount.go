@@ -8,8 +8,8 @@ import (
 	"github.com/andream16/curve-challenge/api/middleware"
 )
 
-// GetPaymentAccount gets user available balance
-func GetPaymentAccount(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
+// GetCard gets user available balance
+func GetCard(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
@@ -30,7 +30,7 @@ func GetPaymentAccount(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Reque
 
 		}
 
-		account, err := middleware.GetPaymentAccount(svc, userID)
+		account, err := middleware.GetCard(svc, userID)
 		if err != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)

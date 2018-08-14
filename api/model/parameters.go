@@ -2,6 +2,8 @@ package model
 
 const (
 
+	EmptyBalance = 0.0
+
 	// UserID represents user's ID
 	UserID = "UserID"
 
@@ -28,4 +30,10 @@ const (
 
 	// TransactionType represents transaction type parameter
 	TransactionType = "TransactionType"
+
+	// CardName represents card's name
+	CardName = "CardName"
+
+	// CardOwner represents card's owner
+	CardOwner = "CardOwner"
 )

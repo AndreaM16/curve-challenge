@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/andream16/curve-challenge/pkg/uuid"
-	internalError "github.com/andream16/curve-challenge/internal/error"
 )
 
 const TimeFormat = "2006-01-02 15:04:05"
@@ -63,24 +62,11 @@ func (t *Transaction) SetDate() *Transaction {
 }
 
 // NewTransaction creates a new transaction
-func NewTransaction(receiver, sender, txType string, amount float64) (*Transaction, error) {
-
-	if len(receiver) == 0 {
-		return nil, internalError.Format(Receiver, ErrEmptyParameter)
-	}
-	if len(sender) == 0 {
-		return nil, internalError.Format(Receiver, ErrEmptyParameter)
-	}
-	if len(txType) == 0 {
-		return nil, internalError.Format(TransactionType, ErrEmptyParameter)
-	}
-	if amount == 0.0 {
-		return nil, internalError.Format(Receiver, ErrEmptyParameter)
-	}
+func NewTransaction(receiver, sender, txType string, amount float64) *Transaction {
 
 	out := new(Transaction)
-	out.SetID().SetDate().SetAmount(amount).SetReceiver(receiver).SetSender(sender)
+	out.SetID().SetDate().SetAmount(amount).SetReceiver(receiver).SetSender(sender).SetType(txType)
 
-	return out, nil
+	return out
 
 }

@@ -7,16 +7,21 @@ import (
 )
 
 var Tables = map[string]string{
-	`PaymentAccounts`: `CREATE TABLE IF NOT EXISTS payment_accounts (
+	`Cards`: `CREATE TABLE IF NOT EXISTS payment_accounts (
 		ID UUID PRIMARY KEY, 
+		owner UUID REFERENCES users (ID),
+		name text,
 		available_balance double precision,
 		marked_balance double precision
 	)`,
 	`Users`: `CREATE TABLE IF NOT EXISTS users (
-		ID UUID PRIMARY KEY, 
-		type text,
-		payment_account UUID REFERENCES payment_accounts (ID),
-		location text
+		ID UUID PRIMARY KEY
+	)`,
+	`Merchants`: `CREATE TABLE IF NOT EXISTS merchants (
+		ID UUID PRIMARY KEY,
+		name text,
+		location text,
+		balance double precision
 	)`,
 	`Transactions`: `CREATE TABLE IF NOT EXISTS transactions (
 		ID UUID PRIMARY KEY, 
@@ -30,7 +35,8 @@ var Tables = map[string]string{
 		ID UUID PRIMARY KEY, 
 		transaction text REFERENCES transactions(ID),
 		amount double precision,
-		captured double precision
+		captured double precision,
+		catched boolean
 	)`,
 }
 

@@ -47,7 +47,7 @@ func TopUp(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		account, err := middleware.GetPaymentAccount(svc, userID)
+		account, err := middleware.GetCard(svc, userID)
 		if err != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)
@@ -64,7 +64,7 @@ func TopUp(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 
 		account = account.SetAvailableBalance(account.AvailableBalance + topUp.Amount)
 
-		updateErr := middleware.UpdatePaymentAccount(svc, account)
+		updateErr := middleware.UpdateCard(svc, account)
 		if updateErr != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)

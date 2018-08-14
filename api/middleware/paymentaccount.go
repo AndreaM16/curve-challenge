@@ -5,10 +5,10 @@ import (
 	"github.com/andream16/curve-challenge/pkg/psql"
 )
 
-// CreatePaymentAccount creates a new payment account assigned to a given user
-func CreatePaymentAccount(svc *psql.PSQL) (*string, error) {
+// CreateCard creates a new payment account assigned to a given user
+func CreateCard(svc *psql.PSQL) (*string, error) {
 
-	paymentAccount := model.NewPaymentAccount()
+	Card := model.NewCard()
 
 	query := `INSERT INTO payment_accounts(ID, available_balance, marked_balance) VALUES ($1, $2, $3)`
 
@@ -20,27 +20,27 @@ func CreatePaymentAccount(svc *psql.PSQL) (*string, error) {
 	defer stmt.Close()
 
 	_, insertError := stmt.Exec(
-		paymentAccount.ID,
-		paymentAccount.AvailableBalance,
-		paymentAccount.MarkedBalance,
+		Card.ID,
+		Card.AvailableBalance,
+		Card.MarkedBalance,
 	)
 	if insertError != nil {
 		return nil, insertError
 	}
 
-	return &paymentAccount.ID, nil
+	return &Card.ID, nil
 
 }
 
-// GetPaymentAccount gets a payment account
-func GetPaymentAccount(svc *psql.PSQL, userID string) (*model.PaymentAccount, error) {
+// GetCard gets a payment account
+func GetCard(svc *psql.PSQL, userID string) (*model.Card, error) {
 
 	user, userErr := GetUser(svc, userID)
 	if userErr != nil {
 		return nil, userErr
 	}
 
-	var account model.PaymentAccount
+	var account model.Card
 
 	query := `SELECT ID,available_balance,marked_balance FROM payment_accounts WHERE ID = $1`
 
@@ -51,7 +51,7 @@ func GetPaymentAccount(svc *psql.PSQL, userID string) (*model.PaymentAccount, er
 
 	defer stmt.Close()
 
-	selectErr := stmt.QueryRow(user.PaymentAccount).Scan(&account.ID, &account.AvailableBalance, &account.MarkedBalance)
+	selectErr := stmt.QueryRow(user.Card).Scan(&account.ID, &account.AvailableBalance, &account.MarkedBalance)
 	if selectErr != nil {
 		return nil, selectErr
 	}
@@ -60,8 +60,8 @@ func GetPaymentAccount(svc *psql.PSQL, userID string) (*model.PaymentAccount, er
 
 }
 
-// UpdatePaymentAccount updates an account's balances
-func UpdatePaymentAccount(svc *psql.PSQL, account *model.PaymentAccount) error {
+// UpdateCard updates an account's balances
+func UpdateCard(svc *psql.PSQL, account *model.Card) error {
 
 	query := `UPDATE payment_accounts SET available_balance = $1, marked_balance = $2`
 

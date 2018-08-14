@@ -57,7 +57,7 @@ func Pay(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		senderAccount, senderAccountErr := middleware.GetPaymentAccount(svc, tx.Sender)
+		senderAccount, senderAccountErr := middleware.GetCard(svc, tx.Sender)
 		if senderAccountErr != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)
@@ -177,7 +177,7 @@ func Pay(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 
 		senderAccount = senderAccount.SetAvailableBalance(senderAccount.AvailableBalance - tx.Amount).SetMarkedBalance(senderAccount.AvailableBalance + tx.Amount)
 
-		updateErr := middleware.UpdatePaymentAccount(svc, senderAccount)
+		updateErr := middleware.UpdateCard(svc, senderAccount)
 		if updateErr != nil {
 
 			w.WriteHeader(http.StatusBadRequest)

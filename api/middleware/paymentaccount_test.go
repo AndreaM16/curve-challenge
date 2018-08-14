@@ -9,7 +9,7 @@ import (
 	"github.com/andream16/curve-challenge/testdata"
 )
 
-func TestCreatePaymentAccount(t *testing.T) {
+func TestCreateCard(t *testing.T) {
 
 	cfg := testdata.MockConfiguration
 
@@ -17,7 +17,7 @@ func TestCreatePaymentAccount(t *testing.T) {
 
 	assert.NoError(t, svcErr)
 
-	s, err := CreatePaymentAccount(svc)
+	s, err := CreateCard(svc)
 
 	assert.NoError(t, err)
 	assert.NotEmpty(t, *s)

@@ -57,7 +57,7 @@ func Refund(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		senderAccount, senderAccountErr := middleware.GetPaymentAccount(svc, tx.Sender)
+		senderAccount, senderAccountErr := middleware.GetCard(svc, tx.Sender)
 		if senderAccountErr != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)
