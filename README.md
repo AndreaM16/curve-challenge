@@ -61,6 +61,13 @@ For the TopUps has been generated a default external Merchant since I haven't co
 
 Through such transaction system is possible for the user to know their available and marked balances, which payments they performed and to whom, the location where they spent such money (since each merchant has a sample location).
  
+## What's missing
+
+ - Any user can perform any action by having the right card, user, authorization and merchant IDs. No authentication has been implemented for the purposes of this project. 
+ - Full test Coverage
+ - Better error handling expecially for the postgres part and for Refund/Revert actions
+ - Better code reuse
+ 
 ## What you need to run the project
 
  - go
