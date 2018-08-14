@@ -17,6 +17,10 @@ const (
 	TOPUP = "TOPUP"
 	// PAYMENT is used for payment actions
 	PAYMENT = "PAYMENT"
+	// CAPTURE is used for capture actions
+	CAPTURE = "CAPTURE"
+	// REFUND is used for refund actions
+	REFUND = "REFUND"
 )
 
 // TopUp adds money to an user's card
@@ -136,6 +140,69 @@ func Capture(svc *psql.PSQL, capture *model.Capture) error {
 	_, updateAuthErr := UpdateAuthorization(svc, authz)
 	if updateAuthErr != nil {
 		return updateAuthErr
+	}
+
+	_, newTxErr := newTransaction(svc, capture.Amount, merchant.ID, tx.Sender, CAPTURE)
+	if newTxErr != nil {
+		return newTxErr
+	}
+
+	return nil
+
+}
+
+// Refund allows a merchant to refund a user by a given amount
+func Refund(svc *psql.PSQL, refund *model.Refund) error {
+
+	if refund.Amount == 0 {
+		return errors.New("You cannot refund 0 amount")
+	}
+
+	auth, authErr := GetAuthorization(svc, refund.Authorization)
+	if authErr != nil {
+		return authErr
+	}
+
+	if auth.Captured == 0 {
+		return errors.New("You cannot refund since you haven't still captured")
+	}
+
+	if !auth.CanRefund(refund.Amount) {
+		return errors.New(fmt.Sprintf("You cannot refund since you are trying to refund %v that is more than the captured amount %v", refund.Amount, auth.Captured))
+	}
+
+	card, cardErr := GetCard(svc, auth.Card)
+	if cardErr != nil {
+		return cardErr
+	}
+
+	card.IncrementAvailableBalance(refund.Amount)
+
+	_, updatecardErr := UpdateCard(svc, card)
+	if updatecardErr != nil {
+		return updatecardErr
+	}
+
+	tx, txErr := getTransaction(svc, auth.Transaction)
+	if txErr != nil {
+		return txErr
+	}
+
+	merchant, merchantErr := GetMerchant(svc, tx.Receiver)
+	if merchantErr != nil {
+		return merchantErr
+	}
+
+	merchant.DecrementBalance(refund.Amount)
+
+	updateMerchantErr := UpdateMerchant(svc, merchant)
+	if updateMerchantErr != nil {
+		return updateMerchantErr
+	}
+
+	_, newTxErr := newTransaction(svc, refund.Amount, merchant.ID, tx.Sender, REFUND)
+	if newTxErr != nil {
+		return newTxErr
 	}
 
 	return nil

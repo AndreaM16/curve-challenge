@@ -82,3 +82,28 @@ func Capture(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+// Refund allows a merchant refund a variable amount to the user
+func Refund(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var refund model.Refund
+
+		unmarshalErr := UnmarshalBody(r, &refund)
+		if unmarshalErr != nil {
+			HandleError(w, unmarshalErr)
+			return
+		}
+
+		err := middleware.Refund(svc, &refund)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+
+		CreatedResponse(w)
+
+		return
+
+	}
+}

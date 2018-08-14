@@ -75,6 +75,11 @@ func (t *Authorization) Capture(amount float64) *Authorization {
 	return t
 }
 
+// CanRefund returns true if it's possible to perform a refund
+func (t *Authorization) CanRefund(amount float64) bool {
+	return t.Captured >= amount
+}
+
 // NewTransaction creates a new transaction
 func NewAuthorization(tx, card string, amount float64) *Authorization {
 

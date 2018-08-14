@@ -46,6 +46,12 @@ func (merchant *Merchant) IncrementBalance(amount float64) *Merchant {
 	return merchant
 }
 
+// DecrementBalance decrements a merchant's balance
+func (merchant *Merchant) DecrementBalance(amount float64) *Merchant {
+	merchant.Balance = merchant.Balance - amount
+	return merchant
+}
+
 // NewMerchant creates a new merchant
 func NewMerchant(name, location string) *Merchant {
 

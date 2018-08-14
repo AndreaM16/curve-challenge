@@ -43,6 +43,8 @@ func main() {
 	r.HandleFunc("/api/transactions/payment", handler.Pay(svc)).Methods("POST")
 	// Capture
 	r.HandleFunc("/api/transactions/capture", handler.Capture(svc)).Methods("POST")
+	// Refund
+	r.HandleFunc("/api/transactions/refund", handler.Refund(svc)).Methods("POST")
 
 	http.Handle("/", r)
 
