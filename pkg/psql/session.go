@@ -3,6 +3,7 @@ package psql
 import (
 	"database/sql"
 
+	// Mandatory for PSQL
 	_ "github.com/lib/pq"
 
 	"github.com/andream16/curve-challenge/internal/configuration"

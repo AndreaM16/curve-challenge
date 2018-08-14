@@ -34,8 +34,8 @@
   name = "github.com/lib/pq"
 
 [[constraint]]
-  name = "github.com/rs/cors"
-  version = "1.5.0"
+  name = "github.com/satori/go.uuid"
+  version = "1.2.0"
 
 [[constraint]]
   name = "github.com/stretchr/testify"

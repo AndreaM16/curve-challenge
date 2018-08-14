@@ -35,10 +35,10 @@
   version = "v1.0.0"
 
 [[projects]]
-  name = "github.com/rs/cors"
+  name = "github.com/satori/go.uuid"
   packages = ["."]
-  revision = "3fb1b69b103a84de38a19c3c6ec073dd6caa4d3f"
-  version = "v1.5.0"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -55,6 +55,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b896916f476615663d9f9ce22e1d5d8f4b98095202da19bfa4beb051fe28aff5"
+  inputs-digest = "588b32279ef811cf2efea6bb25d44cdc1119f50bae2277761672107a1839401f"
   solver-name = "gps-cdcl"
   solver-version = 1

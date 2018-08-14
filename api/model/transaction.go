@@ -6,7 +6,7 @@ import (
 	"github.com/andream16/curve-challenge/pkg/uuid"
 )
 
-// TimeFormat is the desired time format
+// TIMEFORMAT is the desired time format
 const TIMEFORMAT = "2006-01-02 15:04:05"
 
 // Transaction embeds all transaction information
