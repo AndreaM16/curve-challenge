@@ -8,7 +8,14 @@ import (
 	"github.com/tkanos/gonfig"
 )
 
-const confFileName = "configuration.json"
+const (
+	// CONFILENAME is the configuration file name
+	CONFILENAME = "configuration.json"
+	// PRODUCTION is used to attach the db to docker
+	PRODUCTION = "production"
+	// DOCKERHOST is the docker container name
+	DOCKERHOST = "db"
+)
 
 // Configuration embeds environment variables used to initialize the system
 type Configuration struct {
@@ -48,10 +55,14 @@ func Get() (*Configuration, error) {
 	var cfg Configuration
 
 	_, dirname, _, _ := runtime.Caller(0)
-	filePath := path.Join(filepath.Dir(dirname), confFileName)
+	filePath := path.Join(filepath.Dir(dirname), CONFILENAME)
 
 	if err := gonfig.GetConf(filePath, &cfg); err != nil {
 		return nil, err
+	}
+
+	if cfg.Environment == PRODUCTION {
+		cfg.PSQL.Host = DOCKERHOST
 	}
 
 	return &cfg, nil

@@ -9,7 +9,7 @@ import (
 
 const (
 
-	// EXTERNAL is used to set the a default sender for Top Ups
+	// EXTERNAL is used to set a default sender for Top Ups
 	EXTERNAL = "c9e35256-e831-49c8-8471-164e17a66e31"
 	// TOPUP is used for top up actions
 	TOPUP = "TOPUP"
