@@ -57,3 +57,28 @@ func Pay(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+// Capture allows a merchant to capture money by moving money from user's marked balance and merchant's available one
+func Capture(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var capture model.Capture
+
+		unmarshalErr := UnmarshalBody(r, &capture)
+		if unmarshalErr != nil {
+			HandleError(w, unmarshalErr)
+			return
+		}
+
+		err := middleware.Capture(svc, &capture)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+
+		CreatedResponse(w)
+
+		return
+
+	}
+}

@@ -10,12 +10,14 @@ func TestNewAuthorization(t *testing.T) {
 
 	tx := "someTx"
 	amount := 10.0
+	card := "somecard"
 
-	out := NewAuthorization(tx, amount)
+	out := NewAuthorization(tx, card, amount)
 
 	assert.NotEmpty(t, out)
 	assert.Equal(t, tx, out.Transaction)
 	assert.Equal(t, amount, out.Amount)
+	assert.Equal(t, card, out.Card)
 
 }
 

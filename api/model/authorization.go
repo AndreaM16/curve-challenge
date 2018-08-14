@@ -4,8 +4,6 @@ import (
 	"github.com/andream16/curve-challenge/pkg/uuid"
 )
 
-const CATCHED = false
-
 // Authorization embeds the payment authorization
 type Authorization struct {
 	// ID is authorization uuid
@@ -18,6 +16,8 @@ type Authorization struct {
 	Captured float64 `json:"captured"`
 	// Catched is true if the merchant captured all the amount
 	Catched bool `json:"catched"`
+	// Card represents the card where we have to pick money from
+	Card string `json:"card"`
 }
 
 // SetID sets authorization's ID
@@ -44,17 +44,42 @@ func (t *Authorization) SetCaptured() *Authorization {
 	return t
 }
 
+// SetCard sets authorization's transaction
+func (t *Authorization) SetCard(card string) *Authorization {
+	t.Card = card
+	return t
+}
+
 // SetCatched sets authorization's catched field
 func (t *Authorization) SetCatched() *Authorization {
-	t.Catched = CATCHED
+	t.Catched = false
+	return t
+}
+
+// CaptureAmountAvailable represents the amount that can be captured
+func (t *Authorization) CaptureAmountAvailable() float64 {
+	return t.Amount - t.Captured
+}
+
+// CanCapture returns true if it's possible to perform the capture
+func (t *Authorization) CanCapture(amount float64) bool {
+	return !t.Catched && (t.CaptureAmountAvailable() >= amount)
+}
+
+// Capture captures funds from authorization
+func (t *Authorization) Capture(amount float64) *Authorization {
+	t.Captured = t.Captured + amount
+	if t.Captured == t.Amount {
+		t.Catched = true
+	}
 	return t
 }
 
 // NewTransaction creates a new transaction
-func NewAuthorization(tx string, amount float64) *Authorization {
+func NewAuthorization(tx, card string, amount float64) *Authorization {
 
 	out := new(Authorization)
-	out.SetID().SetTransaction(tx).SetAmount(amount).SetCaptured().SetCatched()
+	out.SetID().SetTransaction(tx).SetAmount(amount).SetCaptured().SetCatched().SetCard(card)
 
 	return out
 

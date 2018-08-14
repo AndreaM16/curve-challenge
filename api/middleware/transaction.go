@@ -72,7 +72,7 @@ func Pay(svc *psql.PSQL, payment *model.Payment) error {
 		return txErr
 	}
 
-	auth := model.NewAuthorization(tx.ID, payment.Amount)
+	auth := model.NewAuthorization(tx.ID, payment.Card, payment.Amount)
 
 	createAuthErr := CreateAuthorization(svc, auth)
 	if createAuthErr != nil {
@@ -84,6 +84,58 @@ func Pay(svc *psql.PSQL, payment *model.Payment) error {
 	_, updateErr := UpdateCard(svc, card)
 	if updateErr != nil {
 		return updateErr
+	}
+
+	return nil
+
+}
+
+// Capture allows a merchant to capture an amount from an authorized payment
+func Capture(svc *psql.PSQL, capture *model.Capture) error {
+
+	authz, authzErr := GetAuthorization(svc, capture.Authorization)
+	if authzErr != nil {
+		return authzErr
+	}
+
+	if !authz.CanCapture(capture.Amount) {
+		return errors.New(fmt.Sprintf("You cannot capture amount %v on authorization %v since the remaining capture amount available is %v", capture.Amount, capture.Authorization, authz.CaptureAmountAvailable()))
+	}
+
+	card, cardErr := GetCard(svc, authz.Card)
+	if cardErr != nil {
+		return cardErr
+	}
+
+	card.DecrementMarkedBalance(capture.Amount)
+
+	_, updateCardErr := UpdateCard(svc, card)
+	if updateCardErr != nil {
+		return updateCardErr
+	}
+
+	tx, txErr := getTransaction(svc, authz.Transaction)
+	if txErr != nil {
+		return txErr
+	}
+
+	merchant, merchantErr := GetMerchant(svc, tx.Receiver)
+	if merchantErr != nil {
+		return merchantErr
+	}
+
+	merchant.IncrementBalance(capture.Amount)
+
+	updateMerchantErr := UpdateMerchant(svc, merchant)
+	if updateMerchantErr != nil {
+		return updateMerchantErr
+	}
+
+	authz.Capture(capture.Amount)
+
+	_, updateAuthErr := UpdateAuthorization(svc, authz)
+	if updateAuthErr != nil {
+		return updateAuthErr
 	}
 
 	return nil
@@ -121,5 +173,28 @@ func newTransaction(svc *psql.PSQL, amount float64, sender, receiver, txType str
 	}
 
 	return tx, nil
+
+}
+
+// getTransaction returns a transaction given its ID
+func getTransaction(svc *psql.PSQL, ID string) (*model.Transaction, error) {
+
+	query := `SELECT ID,receiver,sender,amount,date,type FROM transactions WHERE ID = $1`
+
+	var tx model.Transaction
+
+	stmt, err := svc.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	selectErr := stmt.QueryRow(ID).Scan(&tx.ID, &tx.Receiver, &tx.Sender, &tx.Amount, &tx.Date, &tx.Type)
+	if selectErr != nil {
+		return nil, selectErr
+	}
+
+	return &tx, nil
 
 }

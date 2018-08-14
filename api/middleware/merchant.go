@@ -32,3 +32,47 @@ func CreateMerchant(svc *psql.PSQL, merchant *model.Merchant) (*model.Merchant, 
 	return newMerchant, nil
 
 }
+
+// GetMerchant gets a merchant given its ID
+func GetMerchant(svc *psql.PSQL, ID string) (*model.Merchant, error) {
+
+	query := `SELECT ID,name,location,balance FROM merchants WHERE ID = $1`
+
+	var merchant model.Merchant
+
+	stmt, err := svc.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	selectErr := stmt.QueryRow(ID).Scan(&merchant.ID, &merchant.Name, &merchant.Location, &merchant.Balance)
+	if selectErr != nil {
+		return nil, selectErr
+	}
+
+	return &merchant, nil
+
+}
+
+// UpdateMerchant updates a merchant
+func UpdateMerchant(svc *psql.PSQL, merchant *model.Merchant) error {
+
+	query := `UPDATE merchants SET name=$2, location=$3, balance=$4 WHERE ID = $1`
+
+	stmt, err := svc.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, updateErr := stmt.Exec(&merchant.ID, &merchant.Name, &merchant.Location, &merchant.Balance)
+	if updateErr != nil {
+		return updateErr
+	}
+
+	return nil
+
+}

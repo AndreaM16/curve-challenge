@@ -34,7 +34,8 @@ var Tables = []string{
 		transaction UUID REFERENCES transactions (ID),
 		amount double precision,
 		captured double precision,
-		catched boolean
+		catched boolean,
+		card UUID REFERENCES cards (ID)
 	)`,
 }
 
