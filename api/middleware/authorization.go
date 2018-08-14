@@ -8,7 +8,7 @@ import (
 // CreateAuthorization creates a new authorization
 func CreateAuthorization(svc *psql.PSQL, authorization *model.Authorization) error {
 
-	query := `INSERT INTO authorization(ID, transaction, amount, captured) VALUES ($1, $2, $3, $4)`
+	query := `INSERT INTO authorizations (ID,transaction,amount,captured,catched) VALUES ($1, $2, $3, $4, $5)`
 
 	stmt, err := svc.Prepare(query)
 	if err != nil {
@@ -22,6 +22,7 @@ func CreateAuthorization(svc *psql.PSQL, authorization *model.Authorization) err
 		authorization.Transaction,
 		authorization.Amount,
 		authorization.Captured,
+		authorization.Catched,
 	)
 	if insertError != nil {
 		return insertError

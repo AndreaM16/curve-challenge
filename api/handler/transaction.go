@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/andream16/curve-challenge/api/middleware"
 	"github.com/andream16/curve-challenge/api/model"
 	"github.com/andream16/curve-challenge/pkg/psql"
-	"net/http"
 )
 
 // TopUp adds money to an user's card
@@ -19,13 +20,38 @@ func TopUp(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		out, err := middleware.TopUp(svc, topUp)
+		out, err := middleware.TopUp(svc, &topUp)
 		if err != nil {
 			HandleError(w, err)
 			return
 		}
 
-		CreatedResponse(w, out)
+		CreatedResponseWithBody(w, out)
+
+		return
+
+	}
+}
+
+// Pay allows a user to send money to a merchant
+func Pay(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var payment model.Payment
+
+		unmarshalErr := UnmarshalBody(r, &payment)
+		if unmarshalErr != nil {
+			HandleError(w, unmarshalErr)
+			return
+		}
+
+		err := middleware.Pay(svc, &payment)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+
+		CreatedResponse(w)
 
 		return
 

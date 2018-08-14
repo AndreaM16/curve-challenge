@@ -15,10 +15,12 @@ const (
 	EXTERNAL = "c9e35256-e831-49c8-8471-164e17a66e31"
 	// TOPUP is used for top up actions
 	TOPUP = "TOPUP"
+	// PAYMENT is used for payment actions
+	PAYMENT = "PAYMENT"
 )
 
 // TopUp adds money to an user's card
-func TopUp(svc *psql.PSQL, topUp model.TopUp) (*model.Card, error) {
+func TopUp(svc *psql.PSQL, topUp *model.TopUp) (*model.Card, error) {
 
 	if topUp.Amount == 0 {
 		return nil, errors.New("You cannot top up a 0 amount")
@@ -36,7 +38,7 @@ func TopUp(svc *psql.PSQL, topUp model.TopUp) (*model.Card, error) {
 		return nil, updateErr
 	}
 
-	txErr := newTransaction(svc, topUp.Amount, "", card.Owner, TOPUP)
+	_, txErr := newTransaction(svc, topUp.Amount, "", card.Owner, TOPUP)
 	if txErr != nil {
 		return nil, txErr
 	}
@@ -45,8 +47,51 @@ func TopUp(svc *psql.PSQL, topUp model.TopUp) (*model.Card, error) {
 
 }
 
+// Pay allows a user to send money to a merchant
+func Pay(svc *psql.PSQL, payment *model.Payment) error {
+
+	if payment.Amount == 0 {
+		return errors.New("You cannot send 0 amount")
+	}
+
+	card, cardErr := GetCard(svc, payment.Card)
+	if cardErr != nil {
+		return cardErr
+	}
+
+	if card.Owner != payment.Sender {
+		return errors.New(fmt.Sprintf("You cannot access %v card", payment.Card))
+	}
+
+	if !card.CanDecrement(payment.Amount) {
+		return errors.New(fmt.Sprintf("You haven't enough funds to cover such amount on your %v card", payment.Card))
+	}
+
+	tx, txErr := newTransaction(svc, payment.Amount, payment.Sender, payment.Receiver, PAYMENT)
+	if txErr != nil {
+		return txErr
+	}
+
+	auth := model.NewAuthorization(tx.ID, payment.Amount)
+
+	createAuthErr := CreateAuthorization(svc, auth)
+	if createAuthErr != nil {
+		return createAuthErr
+	}
+
+	card.DecrementAvailableBalance(payment.Amount).IncrementMarkedBalance(payment.Amount)
+
+	_, updateErr := UpdateCard(svc, card)
+	if updateErr != nil {
+		return updateErr
+	}
+
+	return nil
+
+}
+
 // newTransaction writes a new transaction
-func newTransaction(svc *psql.PSQL, amount float64, sender, receiver, txType string) error {
+func newTransaction(svc *psql.PSQL, amount float64, sender, receiver, txType string) (*model.Transaction, error) {
 
 	if txType == TOPUP {
 		sender = EXTERNAL
@@ -58,7 +103,7 @@ func newTransaction(svc *psql.PSQL, amount float64, sender, receiver, txType str
 
 	stmt, err := svc.Prepare(query)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer stmt.Close()
@@ -72,9 +117,9 @@ func newTransaction(svc *psql.PSQL, amount float64, sender, receiver, txType str
 		tx.Type,
 	)
 	if insertError != nil {
-		return insertError
+		return nil, insertError
 	}
 
-	return nil
+	return tx, nil
 
 }

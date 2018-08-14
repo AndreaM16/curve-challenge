@@ -71,8 +71,8 @@ func HandleError(w http.ResponseWriter, err error) {
 
 }
 
-// CreatedResponse returns a status created with a json body response
-func CreatedResponse(w http.ResponseWriter, input interface{}) {
+// CreatedResponseWithBody returns a status created with a json body response
+func CreatedResponseWithBody(w http.ResponseWriter, input interface{}) {
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -81,5 +81,14 @@ func CreatedResponse(w http.ResponseWriter, input interface{}) {
 	b, _ := json.Marshal(input)
 
 	w.Write(b)
+
+}
+
+// CreatedResponseWithBody returns a status created with a json body response
+func CreatedResponse(w http.ResponseWriter) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(http.StatusCreated)
 
 }

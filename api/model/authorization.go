@@ -4,6 +4,8 @@ import (
 	"github.com/andream16/curve-challenge/pkg/uuid"
 )
 
+const CATCHED = false
+
 // Authorization embeds the payment authorization
 type Authorization struct {
 	// ID is authorization uuid
@@ -44,7 +46,7 @@ func (t *Authorization) SetCaptured() *Authorization {
 
 // SetCatched sets authorization's catched field
 func (t *Authorization) SetCatched() *Authorization {
-	t.Catched = false
+	t.Catched = CATCHED
 	return t
 }
 

@@ -26,7 +26,7 @@ func CreateMerchant(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
-		CreatedResponse(w, out)
+		CreatedResponseWithBody(w, out)
 
 		return
 

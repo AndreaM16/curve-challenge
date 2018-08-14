@@ -39,6 +39,8 @@ func main() {
 	r.HandleFunc("/api/cards", handler.CreateCard(svc)).Methods("POST")
 	// Top ups a card
 	r.HandleFunc("/api/transactions/top-up", handler.TopUp(svc)).Methods("POST")
+	// Payment
+	r.HandleFunc("/api/transactions/payment", handler.Pay(svc)).Methods("POST")
 
 	http.Handle("/", r)
 

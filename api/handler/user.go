@@ -17,7 +17,7 @@ func CreateUser(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		CreatedResponse(w, user)
+		CreatedResponseWithBody(w, user)
 		return
 
 	}
