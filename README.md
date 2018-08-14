@@ -20,7 +20,7 @@ There are two main entities, users and merchants.
  
 ### Extra
 
-A transaction system has been implemented. In the latter every action performed is reported in the format like follows
+A transaction system has been implemented. In the latter, every action performed is reported like follows
 ```
 // Transaction embeds all transaction information
 type Transaction struct {
@@ -57,9 +57,9 @@ const (
 )
 ```
 
-For the TopUps has been generated a default external Merchant since I haven't covered any external actor.
+For the TopUps, it is mandatory to generate a default external Merchant since external actors (e.g. top up with transfer) isn't covered.
 
-Through such transaction system is possible for the user to know their available and marked balances, which payments they performed and to whom, the location where they spent such money (since each merchant has a sample location).
+Through such transaction system is possible for users to know their available and marked balances, which payments they performed and to whom, the location where they spent such money (since each merchant has a sample location) etc.
  
 ## What's missing
 
