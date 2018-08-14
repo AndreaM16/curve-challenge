@@ -57,6 +57,8 @@ const (
 )
 ```
 
+For the TopUps has been generated a default external Merchant since I haven't covered any external actor.
+
 Through such transaction system is possible for the user to know their available and marked balances, which payments they performed and to whom, the location where they spent such money (since each merchant has a sample location).
  
 ## What you need to run the project
