@@ -6,7 +6,8 @@ import (
 	"github.com/andream16/curve-challenge/pkg/uuid"
 )
 
-const TimeFormat = "2006-01-02 15:04:05"
+// TimeFormat is the desired time format
+const TIMEFORMAT = "2006-01-02 15:04:05"
 
 // Transaction embeds all transaction information
 type Transaction struct {
@@ -57,7 +58,7 @@ func (t *Transaction) SetID() *Transaction {
 // SetDate sets transaction's date
 func (t *Transaction) SetDate() *Transaction {
 	now := time.Now()
-	t.Date = now.Format(TimeFormat)
+	t.Date = now.Format(TIMEFORMAT)
 	return t
 }
 

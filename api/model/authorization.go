@@ -9,7 +9,7 @@ type Authorization struct {
 	// ID is authorization uuid
 	ID string `json:"ID"`
 	// Transaction is a reference to the original transaction that generated the authorization
-	Transaction string `json:"ID"`
+	Transaction string `json:"transaction"`
 	// Amount is the authorized amount
 	Amount float64 `json:"amount"`
 	// Captured is the captured amount
@@ -21,66 +21,66 @@ type Authorization struct {
 }
 
 // SetID sets authorization's ID
-func (t *Authorization) SetID() *Authorization {
-	t.ID = uuid.New()
-	return t
+func (a *Authorization) SetID() *Authorization {
+	a.ID = uuid.New()
+	return a
 }
 
 // SetTransaction sets authorization's transaction
-func (t *Authorization) SetTransaction(tx string) *Authorization {
-	t.Transaction = tx
-	return t
+func (a *Authorization) SetTransaction(tx string) *Authorization {
+	a.Transaction = tx
+	return a
 }
 
 // SetAmount sets authorization's amount
-func (t *Authorization) SetAmount(amount float64) *Authorization {
-	t.Amount = amount
-	return t
+func (a *Authorization) SetAmount(amount float64) *Authorization {
+	a.Amount = amount
+	return a
 }
 
 // SetCaptured sets authorization's transaction
-func (t *Authorization) SetCaptured() *Authorization {
-	t.Captured = 0.0
-	return t
+func (a *Authorization) SetCaptured() *Authorization {
+	a.Captured = 0.0
+	return a
 }
 
 // SetCard sets authorization's transaction
-func (t *Authorization) SetCard(card string) *Authorization {
-	t.Card = card
-	return t
+func (a *Authorization) SetCard(card string) *Authorization {
+	a.Card = card
+	return a
 }
 
 // SetCatched sets authorization's catched field
-func (t *Authorization) SetCatched() *Authorization {
-	t.Catched = false
-	return t
+func (a *Authorization) SetCatched() *Authorization {
+	a.Catched = false
+	return a
 }
 
 // CaptureAmountAvailable represents the amount that can be captured
-func (t *Authorization) CaptureAmountAvailable() float64 {
-	return t.Amount - t.Captured
+func (a *Authorization) CaptureAmountAvailable() float64 {
+	return a.Amount - a.Captured
 }
 
 // CanCapture returns true if it's possible to perform the capture
-func (t *Authorization) CanCapture(amount float64) bool {
-	return !t.Catched && (t.CaptureAmountAvailable() >= amount)
+func (a *Authorization) CanCapture(amount float64) bool {
+	return !a.Catched && (a.CaptureAmountAvailable() >= amount)
 }
 
 // Capture captures funds from authorization
-func (t *Authorization) Capture(amount float64) *Authorization {
-	t.Captured = t.Captured + amount
-	if t.Captured == t.Amount {
-		t.Catched = true
+func (a *Authorization) Capture(amount float64) *Authorization {
+	a.Captured = a.Captured + amount
+	if a.Captured == a.Amount {
+		a.Catched = true
 	}
-	return t
+	return a
 }
 
 // CanRefund returns true if it's possible to perform a refund
-func (t *Authorization) CanRefund(amount float64) bool {
-	return t.Captured >= amount
+func (a *Authorization) CanRefund(amount float64) bool {
+	return a.Captured >= amount
 }
 
-// NewTransaction creates a new transaction
+// NewAuthorization creates a new authorization
 func NewAuthorization(tx, card string, amount float64) *Authorization {
 
 	out := new(Authorization)

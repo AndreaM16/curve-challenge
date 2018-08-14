@@ -89,9 +89,10 @@ func TestPay(t *testing.T) {
 		Card:     updatedCard.ID,
 	}
 
-	err := Pay(svc, payment)
+	out, err := Pay(svc, payment)
 
 	assert.NoError(t, err)
+	assert.NotEmpty(t, out)
 
 }
 

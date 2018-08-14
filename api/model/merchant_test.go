@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewMerchant(t *testing.T) {
@@ -53,6 +54,6 @@ func TestMerchant_SetBalance(t *testing.T) {
 	out := new(Merchant)
 	out.SetBalance()
 
-	assert.Equal(t, EmptyBalance, out.Balance)
+	assert.Equal(t, EMPTYBALANCE, out.Balance)
 
 }

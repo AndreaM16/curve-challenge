@@ -3,8 +3,6 @@ package middleware
 import (
 	"fmt"
 
-	"github.com/go-errors/errors"
-
 	"github.com/andream16/curve-challenge/api/model"
 	"github.com/andream16/curve-challenge/pkg/psql"
 )
@@ -21,18 +19,20 @@ const (
 	CAPTURE = "CAPTURE"
 	// REFUND is used for refund actions
 	REFUND = "REFUND"
+	// REVERT is used for revert actions
+	REVERT = "REVERT"
 )
 
 // TopUp adds money to an user's card
 func TopUp(svc *psql.PSQL, topUp *model.TopUp) (*model.Card, error) {
 
 	if topUp.Amount == 0 {
-		return nil, errors.New("You cannot top up a 0 amount")
+		return nil, fmt.Errorf("you cannot top up a %v amount", topUp.Amount)
 	}
 
 	card, cardErr := GetCard(svc, topUp.Card)
 	if cardErr != nil {
-		return nil, errors.New(fmt.Sprintf("Card %v does not exist", topUp.Card))
+		return nil, fmt.Errorf("card %v does not exist", topUp.Card)
 	}
 
 	card.IncrementAvailableBalance(topUp.Amount)
@@ -52,45 +52,45 @@ func TopUp(svc *psql.PSQL, topUp *model.TopUp) (*model.Card, error) {
 }
 
 // Pay allows a user to send money to a merchant
-func Pay(svc *psql.PSQL, payment *model.Payment) error {
+func Pay(svc *psql.PSQL, payment *model.Payment) (*model.Authorization, error) {
 
 	if payment.Amount == 0 {
-		return errors.New("You cannot send 0 amount")
+		return nil, fmt.Errorf("you cannot send %v amount", payment.Amount)
 	}
 
 	card, cardErr := GetCard(svc, payment.Card)
 	if cardErr != nil {
-		return cardErr
+		return nil, cardErr
 	}
 
 	if card.Owner != payment.Sender {
-		return errors.New(fmt.Sprintf("You cannot access %v card", payment.Card))
+		return nil, fmt.Errorf("you cannot access %v card", payment.Card)
 	}
 
 	if !card.CanDecrement(payment.Amount) {
-		return errors.New(fmt.Sprintf("You haven't enough funds to cover such amount on your %v card", payment.Card))
+		return nil, fmt.Errorf("you haven't enough funds to cover such amount on your %v card", payment.Card)
 	}
 
 	tx, txErr := newTransaction(svc, payment.Amount, payment.Sender, payment.Receiver, PAYMENT)
 	if txErr != nil {
-		return txErr
+		return nil, txErr
 	}
 
 	auth := model.NewAuthorization(tx.ID, payment.Card, payment.Amount)
 
 	createAuthErr := CreateAuthorization(svc, auth)
 	if createAuthErr != nil {
-		return createAuthErr
+		return nil, createAuthErr
 	}
 
 	card.DecrementAvailableBalance(payment.Amount).IncrementMarkedBalance(payment.Amount)
 
 	_, updateErr := UpdateCard(svc, card)
 	if updateErr != nil {
-		return updateErr
+		return nil, updateErr
 	}
 
-	return nil
+	return auth, nil
 
 }
 
@@ -103,7 +103,7 @@ func Capture(svc *psql.PSQL, capture *model.Capture) error {
 	}
 
 	if !authz.CanCapture(capture.Amount) {
-		return errors.New(fmt.Sprintf("You cannot capture amount %v on authorization %v since the remaining capture amount available is %v", capture.Amount, capture.Authorization, authz.CaptureAmountAvailable()))
+		return fmt.Errorf("you cannot capture amount %v on authorization %v since the remaining capture amount available is %v", capture.Amount, capture.Authorization, authz.CaptureAmountAvailable())
 	}
 
 	card, cardErr := GetCard(svc, authz.Card)
@@ -155,7 +155,7 @@ func Capture(svc *psql.PSQL, capture *model.Capture) error {
 func Refund(svc *psql.PSQL, refund *model.Refund) error {
 
 	if refund.Amount == 0 {
-		return errors.New("You cannot refund 0 amount")
+		return fmt.Errorf("you cannot refund %v amount", refund.Amount)
 	}
 
 	auth, authErr := GetAuthorization(svc, refund.Authorization)
@@ -164,11 +164,11 @@ func Refund(svc *psql.PSQL, refund *model.Refund) error {
 	}
 
 	if auth.Captured == 0 {
-		return errors.New("You cannot refund since you haven't still captured")
+		return fmt.Errorf("you cannot refund since you haven't still captured")
 	}
 
 	if !auth.CanRefund(refund.Amount) {
-		return errors.New(fmt.Sprintf("You cannot refund since you are trying to refund %v that is more than the captured amount %v", refund.Amount, auth.Captured))
+		return fmt.Errorf("you cannot refund since you are trying to refund %v that is more than the captured amount %v", refund.Amount, auth.Captured)
 	}
 
 	card, cardErr := GetCard(svc, auth.Card)
@@ -213,7 +213,7 @@ func Refund(svc *psql.PSQL, refund *model.Refund) error {
 func Revert(svc *psql.PSQL, reverse *model.Revert) error {
 
 	if reverse.Amount == 0 {
-		return errors.New("You cannot revert 0 amount")
+		return fmt.Errorf("you cannot revert %v amount", reverse.Amount)
 	}
 
 	auth, authErr := GetAuthorization(svc, reverse.Authorization)
@@ -222,7 +222,7 @@ func Revert(svc *psql.PSQL, reverse *model.Revert) error {
 	}
 
 	if reverse.Amount > auth.Amount {
-		return errors.New(fmt.Sprintf("You cannot revert since you are trying to revert %v that is more than the authorized amount %v", reverse.Amount, auth.Amount))
+		return fmt.Errorf("you cannot revert since you are trying to revert %v that is more than the authorized amount %v", reverse.Amount, auth.Amount)
 	}
 
 	auth.SetAmount(auth.Amount - reverse.Amount)
@@ -230,6 +230,21 @@ func Revert(svc *psql.PSQL, reverse *model.Revert) error {
 	_, updateAuthErr := UpdateAuthorization(svc, auth)
 	if updateAuthErr != nil {
 		return updateAuthErr
+	}
+
+	tx, txErr := getTransaction(svc, auth.Transaction)
+	if txErr != nil {
+		return txErr
+	}
+
+	merchant, merchantErr := GetMerchant(svc, tx.Receiver)
+	if merchantErr != nil {
+		return merchantErr
+	}
+
+	_, newTxErr := newTransaction(svc, reverse.Amount, merchant.ID, tx.Sender, REVERT)
+	if newTxErr != nil {
+		return newTxErr
 	}
 
 	return nil

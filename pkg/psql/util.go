@@ -7,7 +7,8 @@ import (
 	internalErr "github.com/andream16/curve-challenge/internal/error"
 )
 
-const ConnectionString = "host=%s user=%s dbname=%s sslmode=%s"
+// CONNECTIONSTRING represents the default psql string to be filled
+const CONNECTIONSTRING = "host=%s user=%s dbname=%s sslmode=%s"
 
 // newSessionString returns a new connection string initialized using the configuration
 func newSessionString(cfg *configuration.Configuration) (string, error) {
@@ -28,6 +29,6 @@ func newSessionString(cfg *configuration.Configuration) (string, error) {
 		return "", internalErr.Format(ErrEmptyParameter, DriverName)
 	}
 
-	return fmt.Sprintf(ConnectionString, cfg.PSQL.Host, cfg.PSQL.User, cfg.PSQL.DBName, cfg.PSQL.SSLMode), nil
+	return fmt.Sprintf(CONNECTIONSTRING, cfg.PSQL.Host, cfg.PSQL.User, cfg.PSQL.DBName, cfg.PSQL.SSLMode), nil
 
 }

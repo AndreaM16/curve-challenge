@@ -4,6 +4,9 @@ import (
 	"github.com/andream16/curve-challenge/pkg/uuid"
 )
 
+// EMPTYBALANCE is always 0
+const EMPTYBALANCE = 0.0
+
 // Card embeds a payment account information
 type Card struct {
 	// ID is the unique identifier for a a payment account
@@ -38,13 +41,13 @@ func (c *Card) SetName(name string) *Card {
 
 // SetMarkedBalance sets card's marked balance
 func (c *Card) SetMarkedBalance() *Card {
-	c.MarkedBalance = EmptyBalance
+	c.MarkedBalance = EMPTYBALANCE
 	return c
 }
 
 // SetAvailableBalance sets card's available balance
 func (c *Card) SetAvailableBalance() *Card {
-	c.AvailableBalance = EmptyBalance
+	c.AvailableBalance = EMPTYBALANCE
 	return c
 }
 
@@ -66,7 +69,7 @@ func (c *Card) DecrementMarkedBalance(amount float64) *Card {
 	return c
 }
 
-// IncrementAvailableBalance increments an account marked balance
+// IncrementMarkedBalance increments an account marked balance
 func (c *Card) IncrementMarkedBalance(amount float64) *Card {
 	c.MarkedBalance = c.MarkedBalance + amount
 	return c

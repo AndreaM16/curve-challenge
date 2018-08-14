@@ -66,6 +66,6 @@ func TestAuthorization_SetCaptured(t *testing.T) {
 	out := new(Authorization)
 	out = out.SetCaptured()
 
-	assert.Equal(t, EmptyBalance, out.Captured)
+	assert.Equal(t, EMPTYBALANCE, out.Captured)
 
 }

@@ -45,13 +45,13 @@ func Pay(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err := middleware.Pay(svc, &payment)
+		out, err := middleware.Pay(svc, &payment)
 		if err != nil {
 			HandleError(w, err)
 			return
 		}
 
-		CreatedResponse(w)
+		CreatedResponseWithBody(w, out)
 
 		return
 

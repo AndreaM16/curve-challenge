@@ -1,2 +1,2 @@
-// package psql contains generic psql methods to be eventually reused
+// Package psql contains generic psql methods to be eventually reused
 package psql

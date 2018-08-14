@@ -11,6 +11,7 @@ type Response struct {
 	Message string `json:"message"`
 }
 
+// SetMessage sets Response's message
 func (r *Response) SetMessage(message string) *Response {
 	r.Message = message
 	return r
@@ -84,7 +85,7 @@ func CreatedResponseWithBody(w http.ResponseWriter, input interface{}) {
 
 }
 
-// CreatedResponseWithBody returns a status created with a json body response
+// CreatedResponse returns a status created response
 func CreatedResponse(w http.ResponseWriter) {
 
 	w.Header().Set("Content-Type", "application/json")

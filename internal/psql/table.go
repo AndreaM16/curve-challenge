@@ -4,6 +4,7 @@ import (
 	"github.com/andream16/curve-challenge/pkg/psql"
 )
 
+// Tables are default tables to be created
 var Tables = []string{
 	`CREATE TABLE IF NOT EXISTS users (
 		ID UUID PRIMARY KEY
@@ -39,6 +40,7 @@ var Tables = []string{
 	)`,
 }
 
+// DefaultInserts are default inserts
 var DefaultInserts = []string{
 	`INSERT INTO merchants(ID,name,location,balance) VALUES ('c9e35256-e831-49c8-8471-164e17a66e31', 'EXTERNAL', 'London', 10.0)`,
 }

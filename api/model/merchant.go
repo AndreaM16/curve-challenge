@@ -34,9 +34,9 @@ func (merchant *Merchant) SetLocation(location string) *Merchant {
 	return merchant
 }
 
-// SetLocation Sets merchant's location
+// SetBalance Sets merchant's balance
 func (merchant *Merchant) SetBalance() *Merchant {
-	merchant.Balance = EmptyBalance
+	merchant.Balance = EMPTYBALANCE
 	return merchant
 }
 

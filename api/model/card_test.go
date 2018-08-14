@@ -46,7 +46,7 @@ func TestCard_SetAvailableBalance(t *testing.T) {
 	out := new(Card)
 	out = out.SetAvailableBalance()
 
-	assert.Equal(t, EmptyBalance, out.AvailableBalance)
+	assert.Equal(t, EMPTYBALANCE, out.AvailableBalance)
 
 }
 
@@ -55,7 +55,7 @@ func TestCard_SetMarkedBalance(t *testing.T) {
 	out := new(Card)
 	out = out.SetMarkedBalance()
 
-	assert.Equal(t, EmptyBalance, out.MarkedBalance)
+	assert.Equal(t, EMPTYBALANCE, out.MarkedBalance)
 
 }
 
