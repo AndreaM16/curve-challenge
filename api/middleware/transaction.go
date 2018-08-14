@@ -209,6 +209,33 @@ func Refund(svc *psql.PSQL, refund *model.Refund) error {
 
 }
 
+// Revert reverts the initial authorized amount by a given one
+func Revert(svc *psql.PSQL, reverse *model.Revert) error {
+
+	if reverse.Amount == 0 {
+		return errors.New("You cannot revert 0 amount")
+	}
+
+	auth, authErr := GetAuthorization(svc, reverse.Authorization)
+	if authErr != nil {
+		return authErr
+	}
+
+	if reverse.Amount > auth.Amount {
+		return errors.New(fmt.Sprintf("You cannot revert since you are trying to revert %v that is more than the authorized amount %v", reverse.Amount, auth.Amount))
+	}
+
+	auth.SetAmount(auth.Amount - reverse.Amount)
+
+	_, updateAuthErr := UpdateAuthorization(svc, auth)
+	if updateAuthErr != nil {
+		return updateAuthErr
+	}
+
+	return nil
+
+}
+
 // newTransaction writes a new transaction
 func newTransaction(svc *psql.PSQL, amount float64, sender, receiver, txType string) (*model.Transaction, error) {
 

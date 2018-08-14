@@ -107,3 +107,28 @@ func Refund(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
+
+// Revert allows a merchant reversing a variable amount
+func Revert(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		var reverse model.Revert
+
+		unmarshalErr := UnmarshalBody(r, &reverse)
+		if unmarshalErr != nil {
+			HandleError(w, unmarshalErr)
+			return
+		}
+
+		err := middleware.Revert(svc, &reverse)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+
+		CreatedResponse(w)
+
+		return
+
+	}
+}
