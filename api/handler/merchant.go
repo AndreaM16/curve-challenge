@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/andream16/curve-challenge/api/middleware"
-	"github.com/andream16/curve-challenge/pkg/psql"
 	"github.com/andream16/curve-challenge/api/model"
+	"github.com/andream16/curve-challenge/pkg/psql"
 )
 
 // CreateMerchant creates a new merchant

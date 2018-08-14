@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/andream16/curve-challenge/pkg/psql"
 	"github.com/andream16/curve-challenge/api/model"
+	"github.com/andream16/curve-challenge/pkg/psql"
 )
 
 // CreateAuthorization creates a new authorization

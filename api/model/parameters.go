@@ -1,7 +1,6 @@
 package model
 
 const (
-
 	EmptyBalance = 0.0
 
 	// UserID represents user's ID

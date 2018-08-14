@@ -11,7 +11,7 @@ type Card struct {
 	// Owner is the card owner
 	Owner string `json:"owner,omitempty"`
 	// Name is the card name
-	Name string `json:"owner,omitempty"`
+	Name string `json:"name,omitempty"`
 	// MarkedBalance is the marked balance. It cannot be used.
 	MarkedBalance float64 `json:"marked_balance"`
 	// AvailableBalance is the available balance

@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/andream16/curve-challenge/testdata"
 	"github.com/andream16/curve-challenge/pkg/psql"
+	"github.com/andream16/curve-challenge/testdata"
 )
 
 func TestCreateUser(t *testing.T) {

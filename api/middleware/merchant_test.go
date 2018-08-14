@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/andream16/curve-challenge/api/model"
 	"github.com/andream16/curve-challenge/pkg/psql"
 	"github.com/andream16/curve-challenge/testdata"
-	"github.com/andream16/curve-challenge/api/model"
 )
 
 func TestCreateMerchant(t *testing.T) {
