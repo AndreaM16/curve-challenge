@@ -5,9 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/andream16/curve-challenge/api/model"
-	"github.com/andream16/curve-challenge/pkg/psql"
 	"github.com/andream16/curve-challenge/testdata"
+	"github.com/andream16/curve-challenge/pkg/psql"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -18,16 +17,10 @@ func TestCreateUser(t *testing.T) {
 
 	assert.NoError(t, svcErr)
 
-	user, userErr := model.NewUser(
-		"some_account",
-		"some_location",
-		"merchant",
-	)
-
-	assert.NoError(t, userErr)
-
-	err := CreateUser(svc, user)
+	out, err := CreateUser(svc)
 
 	assert.NoError(t, err)
+
+	assert.NotEmpty(t, out)
 
 }

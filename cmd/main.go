@@ -33,12 +33,10 @@ func main() {
 
 	// Create User
 	r.HandleFunc("/api/users", handler.CreateUser(svc)).Methods("POST")
-	// Get Account aka both balances for easiness
-	r.HandleFunc("/api/accounts", handler.GetCard(svc)).Methods("GET")
-	// Top up an account, this does not write a transaction since handling an external source would be quite tricky
-	r.HandleFunc("/api/top-up", handler.TopUp(svc)).Methods("POST")
-	// Performs a payment
-	r.HandleFunc("/api/pay", handler.Pay(svc)).Methods("POST")
+	// Create Merchant
+	r.HandleFunc("/api/merchants", handler.CreateMerchant(svc)).Methods("POST")
+	// Create Card
+	r.HandleFunc("/api/cards", handler.CreateCard(svc)).Methods("POST")
 
 	http.Handle("/", r)
 

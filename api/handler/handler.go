@@ -53,3 +53,33 @@ func UnmarshalBody(r *http.Request, out interface{}) error {
 	return nil
 
 }
+
+// HandleError returns internal server error and error message
+func HandleError(w http.ResponseWriter, err error) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(http.StatusInternalServerError)
+
+	resp := NewResponse(err.Error())
+
+	b, _ := resp.JsonMarshal()
+
+	w.Write(b)
+
+	return
+
+}
+
+// CreatedResponse returns a status created with a json body response
+func CreatedResponse(w http.ResponseWriter, input interface{}) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(http.StatusCreated)
+
+	b, _ := json.Marshal(input)
+
+	w.Write(b)
+
+}

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/andream16/curve-challenge/api/middleware"
-	"github.com/andream16/curve-challenge/api/model"
 	"github.com/andream16/curve-challenge/pkg/psql"
 )
 
@@ -12,41 +11,13 @@ import (
 func CreateUser(svc *psql.PSQL) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		w.Header().Set("Content-Type", "application/json")
-
-		var user model.User
-
-		unmarshalErr := UnmarshalBody(r, &user)
-		if unmarshalErr != nil {
-
-			w.WriteHeader(http.StatusBadRequest)
-
-			resp := NewResponse(InvalidParameters)
-
-			b, _ := resp.JsonMarshal()
-
-			w.Write(b)
-
-			return
-		}
-
-		err := middleware.CreateUser(svc, &user)
+		user, err := middleware.CreateUser(svc)
 		if err != nil {
-
-			w.WriteHeader(http.StatusInternalServerError)
-
-			resp := NewResponse(err.Error())
-
-			b, _ := resp.JsonMarshal()
-
-			w.Write(b)
-
+			HandleError(w, err)
 			return
-
 		}
 
-		w.WriteHeader(http.StatusCreated)
-
+		CreatedResponse(w, user)
 		return
 
 	}
