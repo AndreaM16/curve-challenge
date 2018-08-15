@@ -85,9 +85,9 @@ N.B. Make sure to start `postgresql` and create a table called `curve` with defa
 ## Deploy with docker
  - Install Docker and Docker-Compose
  - Make sure that you have `"ENVIRONMENT" : "production"` in `internal/configuration/configuration.json`
- - run `docker-compose` up
+ - run `docker-compose up`
  
-N.B. make sure you have port `8000` and `5432` available.
+N.B. make sure you have ports `8000` and `5432` available.
 
 ## Endpoints
 
